@@ -1,0 +1,30 @@
+name: test ci pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        
+      - name: Restore dependencies
+        run: dotnet restore CiTest.sln
+      
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test
+        run: dotnet test
+      
