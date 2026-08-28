@@ -18,13 +18,16 @@ jobs:
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
+
+        with:
+          dotnet-version: 9
         
       - name: Restore dependencies
         run: dotnet restore CiTest.sln
       
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build --no-restore --configuration Release
 
       - name: Test
-        run: dotnet test
+        run: dotnet test --configuration Release --no-build
       
