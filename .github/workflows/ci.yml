@@ -1,33 +1,41 @@
-name: test ci pipeline
+name: CI
 
 on:
   pull_request:
     branches:
       - main
+
   push:
     branches:
       - main
 
 
 jobs:
+
   build-test:
+
     runs-on: ubuntu-latest
+
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v7
+
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
 
         with:
-          dotnet-version: 9
-        
+          dotnet-version: "9.0.x"
+
+
       - name: Restore dependencies
-        run: dotnet restore CiTest.sln
-      
+        run: dotnet restore src/CiTest.Api/CiTest.Api.csproj
+
+
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build CiTest.sln --configuration Release --no-restore
+
 
       - name: Test
-        run: dotnet test --configuration Release --no-build
-      
+        run: dotnet test CiTest.sln --configuration Release --no-build
