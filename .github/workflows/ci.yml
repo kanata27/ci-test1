@@ -74,6 +74,11 @@ jobs:
       - name: Run created container
         run: docker run -d -p 8080:8080 --name ci-test-container ci-test:${{ github.sha }}
 
+      - name: Check container
+        run: |
+          docker ps -a
+          docker logs ci-test-container
+
       - name: Container healthcheck
         run: curl --fail http://localhost:8080/health
 
