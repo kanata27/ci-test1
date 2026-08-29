@@ -80,7 +80,18 @@ jobs:
           docker logs ci-test-container
 
       - name: Container healthcheck
-        run: curl --fail http://localhost:8080/health
+      run: |
+        for i in {1..10}; do
+          if curl --fail --silent http://localhost:8080/health; then
+            exit 0
+          fi
+
+          echo "Application is not ready yet..."
+          sleep 2
+        done
+
+        docker logs ci-test-container
+        exit 1
 
       - name: Remove docker container
         run: docker kill ci-test-container
