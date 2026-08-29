@@ -70,3 +70,12 @@ jobs:
 
       - name: Check images
         run: docker images
+
+      - name: Run created container
+        run: docker run -d --name ci-test-container ci-test:${{ github.sha }}
+
+      - name: Container healthcheck
+        run: curl --fail http://localhost:8080/health
+
+      - name: Remove docker container
+        run: docker kill ci-test-container
