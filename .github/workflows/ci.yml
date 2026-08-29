@@ -30,8 +30,7 @@ jobs:
 
 
       - name: Restore dependencies
-        run: dotnet restore src/CiTest.Api/CiTest.Api.csproj
-
+        run: dotnet restore CiTest.sln
 
       - name: Build
         run: dotnet build CiTest.sln --configuration Release --no-restore
