@@ -151,7 +151,7 @@ jobs:
               sleep 2
             done
 
-            docker logs ci-test-container
+            docker logs ci-container
             exit 1
 
       - name: Delete container
