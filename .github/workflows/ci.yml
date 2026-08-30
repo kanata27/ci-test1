@@ -116,3 +116,19 @@ jobs:
       - name: Push image to GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: docker push ghcr.io/kanata27/ci-test1:${{ github.sha }}
+
+  verify-registry:
+    runs-on: ubuntu-latest
+    needs:
+      - docker
+    on:
+      push:
+        branches:
+          - main
+
+    steps:
+
+      - name: Health control
+        run: pwd
+
+
