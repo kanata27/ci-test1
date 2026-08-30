@@ -100,7 +100,7 @@ jobs:
         if: always()
         run: docker rm -f  ci-test-container
 
-      - name: Login GHCR
+      - name: Login in GHCR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/login-action@v4
 
@@ -121,14 +121,39 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - docker
-    on:
-      push:
-        branches:
-          - main
-
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      packages: read
     steps:
 
-      - name: Health control
-        run: pwd
+      - name: Login in GHCR
+        uses: docker/login-action@v4
+          
+        with:  
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Pull container image from GHCR
+        run: docker pull ghcr.io/kanata27/ci-test1:${{ github.sha }}
 
+      - name: Run container
+        run: docker run -d --name ci-container -p "8080:8080" ghcr.io/kanata27/ci-test1:${{ github.sha }}
+
+      - name: Healthcheck container
+        run: | 
+            for i in {1..10}; do
+              if curl --fail --silent http://localhost:8080/health; then
+                exit 0
+              fi
+
+              echo "Application is not ready yet..."
+              sleep 2
+            done
+
+            docker logs ci-test-container
+            exit 1
+
+      - name: Delete container
+        if: always()
+        run: docker rm -f ci-container
